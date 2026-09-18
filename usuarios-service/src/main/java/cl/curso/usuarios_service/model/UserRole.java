@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "USER_ROLES")
@@ -17,9 +19,13 @@ public class UserRole {
     private Long idUserRole;
 
     @Column(name = "ROLE_NAME", nullable = false, unique = true, length = 50)
+    @NotBlank(message = "El Rol a crear es obligatorio")
+    @Size(max = 50, message = "El campo no puede superar 50 caracteres")
     private String userNameRole;
 
     @Column(name = "ROLE_DESCRIPTION", length = 250)
+    @NotBlank(message = "La descripción es obligatoria")
+    @Size(max = 250, message = "La descripción no puede superar los 250 caracteres")
     private String userDescriptionRole;
 
     protected UserRole() {

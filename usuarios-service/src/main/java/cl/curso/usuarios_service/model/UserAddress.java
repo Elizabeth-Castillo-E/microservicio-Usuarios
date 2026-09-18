@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "USER_ADDRESSES")
@@ -19,18 +21,28 @@ public class UserAddress {
     private Long idUserAddress;
 
     @Column(name = "STREET", nullable = false, length = 150)
+    @NotBlank(message = "La calle es obligatoria")
+    @Size(max = 150, message = "La calle no puede superar 150 caracteres")
     private String street;
 
     @Column(name = "STREET_NUMBER", nullable = false, length = 20)
+    @NotBlank(message = "El número es obligatorio")
+    @Size(max = 20, message = "El número no puede superar 20 caracteres")
     private String number;
 
     @Column(name = "CITY", nullable = false, length = 100)
+    @NotBlank(message = "La ciudad es obligatoria")
+    @Size(max = 100, message = "La ciudad no puede superar 100 caracteres")
     private String city;
 
     @Column(name = "REGION", nullable = false, length = 100)
+    @NotBlank(message = "La región es obligatoria")
+    @Size(max = 100, message = "La región no puede superar 100 caracteres")
     private String region;
 
     @Column(name = "COUNTRY", nullable = false, length = 100)
+    @NotBlank(message = "El país es obligatorio")
+    @Size(max = 100, message = "El país no puede superar 100 caracteres")
     private String country;
 
     @JsonBackReference
