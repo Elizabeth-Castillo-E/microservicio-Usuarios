@@ -7,18 +7,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.Optional;
 
-@Service
-public class UserService {
+//@Service
+public interface UserService {
+ List<User> getAllUsers();
+    Optional<User> getUserById(Long id);
+
+    List<UserRole> getAllRoles();
+    Optional<UserRole> getRoleById(Long id);
+
+    List<UserAddress> getAllAddresses();
+    Optional<UserAddress> getAddressById(Long id);
+        
+}
+
+       
+  /*    
+  UserService {
 
         private final List<UserRole> userRoles;
     
         private final List<UserAddress> userAddresses;
     
         private final List<User> users;
-
-       
-      public UserService() {
+        public UserService() {
     UserRole administratorRole = new UserRole(
             1L,
             "ADMINISTRADOR",
@@ -123,9 +136,9 @@ public class UserService {
                     supervisorRole,
                     List.of(address1)
             )
-    );
-}
-   public List<User> findAllUsers() {
+    );*/
+
+  /*public List<User> findAllUsers() {
     return users;
 }
 
@@ -165,5 +178,6 @@ public UserAddress findAddressById(long id) {
             HttpStatus.NOT_FOUND,
             "Esta direccion no esta en el mapa " + id
         ));
-}
-}
+}*/
+
+

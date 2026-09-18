@@ -3,74 +3,79 @@ import cl.curso.usuarios_service.model.User;
 import cl.curso.usuarios_service.model.UserAddress;
 import cl.curso.usuarios_service.model.UserRole;
 import cl.curso.usuarios_service.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-
+import org.springframework.http.HttpStatus;
 import java.util.List;
 
 import java.util.Map;
+import java.util.Optional;
 
 import jakarta.validation.constraints.Positive;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/microservice/usuarios")
+@RequestMapping("/usuarios")
 @Validated
 public class UserController {
 
-    private final UserService userService;
+    /* private final UserService userService;*/
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @Autowired 
+    private UserService userService;
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-    @GetMapping("/users")
-    public List<User> getUsers() {
-        return userService.findAllUsers();
-    }
-
-    @GetMapping("/users/{id}")
-    public User getUserById(
+    @GetMapping("/{id}")
+    public Optional <User> getUserById(
             @PathVariable
             @Positive(message = "no tienes a nadie registrado con esa informacion")
             Long id
     ) {
-        return userService.findUserById(id);
+        return userService.getUserById(id);
     }
 
-    @GetMapping("/userRoles")
-    public List<UserRole> getRoles() {
-        return userService.findAllRoles();
-    }
+   @GetMapping("/userRoles")
+public List<UserRole> getRoles() {
+    return userService.getAllRoles();
+}
 
-    @GetMapping("/userRoles/{id}")
-    public UserRole getRoleById(
-            @PathVariable
-            @Positive(message = "El Rol que buscas solo no está")
-            Long id
-    ) {
-        return userService.findRoleById(id);
-    }
+@GetMapping("/userRoles/{id}")
+public UserRole getRoleById(
+        @PathVariable
+        @Positive(message = "El ID debe ser mayor que cero")
+        Long id
+) {
+    return userService.getRoleById(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Rol no encontrado: " + id
+            ));
+}
 
-    @GetMapping("/userAddresses")
-    public List<UserAddress> getAddresses() {
-        return userService.findAllAddresses();
-    }
+@GetMapping("/userAddresses")
+public List<UserAddress> getAddresses() {
+    return userService.getAllAddresses();
+}
 
-    @GetMapping("/userAddresses/{id}")
-    public UserAddress getAddressById(
-            @PathVariable
-            @Positive(message = "El ID debe ser mayor que cero")
-            Long id
-    ) {
-        return userService.findAddressById(id);
-    }
+@GetMapping("/userAddresses/{id}")
+public UserAddress getAddressById(
+        @PathVariable
+        @Positive(message = "El ID debe ser mayor que cero")
+        Long id
+) {
+    return userService.getAddressById(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Dirección no encontrada: " + id
+            ));
+}
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(
