@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 @Table(name = "USER_ADDRESSES")
 public class UserAddress {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     @Column(name = "ID_USER_ADDRESS")
     private Long idUserAddress;
 
@@ -58,7 +58,7 @@ public class UserAddress {
         this.country = country;
     }
 
-    public long getIdUserAddress() {
+    public Long getIdUserAddress() {
         return idUserAddress;
     }
 
@@ -80,6 +80,30 @@ public class UserAddress {
 
     public String getCountry() {
         return country;
+    }
+
+      public void setIdUserAddress(Long idUserAddress) {
+        this.idUserAddress = idUserAddress;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public User getUser() {

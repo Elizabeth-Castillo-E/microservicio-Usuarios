@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+
 @RestController
 @RequestMapping("/usuarios")
 @Validated
@@ -89,5 +90,58 @@ public UserAddress getAddressById(
                     : "No se encontró el recurso solicitado",
                 "estado", exception.getStatusCode().value()
             ));
+    }
+    @PostMapping
+    public User creaUser(@RequestBody User user)
+    {
+        return userService.saveUser(user);
+    }
+
+    @PostMapping("/userRoles")
+    public UserRole creaUserRole(@RequestBody UserRole userRole)
+    {
+        return userService.saveUserRole(userRole);
+    }
+
+    @PostMapping("/userAddresses")
+    public UserAddress creaUserAddress(@RequestBody UserAddress userAddress)
+    {
+        return userService.saveUserAddress(userAddress);
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user)
+    {
+        return userService.updateUser(id, user);
+    }
+
+    @PutMapping("/userRoles/{id}")
+    public UserRole updateUserRole(@PathVariable Long id, @RequestBody UserRole userRole)
+    {
+        return userService.updateUserRole(id, userRole);
+    }
+
+    @PutMapping("/userAddresses/{id}")
+    public UserAddress updateUserAddress(@PathVariable Long id, @RequestBody UserAddress userAddress)
+    {
+        return userService.updateUserAddress(id, userAddress);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id)
+    {
+        userService.deleteUser(id);
+    }
+
+    @DeleteMapping("/userRoles/{id}")
+    public void deleteUserRole(@PathVariable Long id)
+    {
+        userService.deleteUserRole(id);
+    }
+
+    @DeleteMapping("/userAddresses/{id}")
+    public void deleteUserAddress(@PathVariable Long id)
+    {
+        userService.deleteUserAddress(id);
     }
 }

@@ -3,9 +3,7 @@ package cl.curso.usuarios_service.service;
 import cl.curso.usuarios_service.model.User;
 import cl.curso.usuarios_service.model.UserAddress;
 import cl.curso.usuarios_service.model.UserRole;
-import org.springframework.stereotype.Service;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +12,26 @@ public interface UserService {
  List<User> getAllUsers();
     Optional<User> getUserById(Long id);
 
-    List<UserRole> getAllRoles();
-    Optional<UserRole> getRoleById(Long id);
+    
+    
+
+   
+    User saveUser (User user);
+    User updateUser (Long id, User user);
+    void  deleteUser (Long id);
+    
 
     List<UserAddress> getAllAddresses();
     Optional<UserAddress> getAddressById(Long id);
+    UserAddress saveUserAddress (UserAddress userAddress);
+    UserAddress updateUserAddress (Long id, UserAddress userAddress);   
+    void  deleteUserAddress (Long id);
+
+    List<UserRole> getAllRoles();
+    Optional<UserRole> getRoleById(Long id);
+    UserRole saveUserRole (UserRole userRole);
+    UserRole updateUserRole (Long id, UserRole userRole);   
+    void deleteUserRole (Long id);
         
 }
 

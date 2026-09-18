@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService{
 
 } */
 package cl.curso.usuarios_service.service;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +69,27 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
+    
+    @Override 
+    public User saveUser(User user){
+        return userRepository.save(user);
+    }
+    @Override 
+    public User updateUser(Long id, User user){
+        if (userRepository.existsById(id)) {
+            user.setIdUser(id);
+            userRepository.save(user);
+            return userRepository.save(user);
+            
+        }
+        else {
+                throw new IllegalArgumentException("el id del usuario no puede ser nulo");
+            }
+    }
+    @Override 
+    public void deleteUser(Long id){
+        userRepository.deleteById(id);
+    }
 
     @Override
     public List<UserRole> getAllRoles() {
@@ -79,6 +100,27 @@ public class UserServiceImpl implements UserService {
     public Optional<UserRole> getRoleById(Long id) {
         return userRoleRepository.findById(id);
     }
+    @Override 
+    public UserRole saveUserRole (UserRole userRole){
+        return userRoleRepository.save(userRole);
+    }
+    @Override 
+    public UserRole updateUserRole(Long id, UserRole userRole){
+        if (userRoleRepository.existsById(id)) {
+            userRole.setIdUserRole(id);
+            userRoleRepository.save(userRole);
+            return userRoleRepository.save(userRole);
+            
+        }
+        else {
+                throw new IllegalArgumentException("el id del usuario no puede ser nulo");
+            }
+    }
+    @Override 
+    public void deleteUserRole(Long id){
+        userRoleRepository.deleteById(id);
+    }
+
 
     @Override
     public List<UserAddress> getAllAddresses() {
@@ -89,4 +131,26 @@ public class UserServiceImpl implements UserService {
     public Optional<UserAddress> getAddressById(Long id) {
         return userAddressRepository.findById(id);
     }
+
+     @Override 
+    public UserAddress saveUserAddress(UserAddress UserAddress){
+        return userAddressRepository.save(UserAddress);
+    }
+    @Override 
+    public UserAddress updateUserAddress(Long id, UserAddress userAddress){
+        if (userAddressRepository.existsById(id)) {
+            userAddress.setIdUserAddress(id);
+            userAddressRepository.save(userAddress);
+            return userAddressRepository.save(userAddress);
+            
+        }
+        else {
+                throw new IllegalArgumentException("el id del usuario no puede ser nulo");
+            }
+    }
+    @Override 
+    public void deleteUserAddress(Long id){
+        userAddressRepository.deleteById(id);
+    }
+
 }

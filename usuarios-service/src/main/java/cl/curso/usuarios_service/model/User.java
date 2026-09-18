@@ -53,7 +53,7 @@ public class User {
         // Constructor requerido por JPA.
     }
 
-    public User(long idUser, 
+    public User(Long idUser, 
                 String userRut, 
                 String userName, 
                 String userEmail, 
@@ -69,7 +69,7 @@ public class User {
         this.userAddresses = userAddresses;
     }
 
-    public long getIdUser() {
+    public Long getIdUser() {
         return idUser;
     }
     public String getUserRut() {
@@ -91,4 +91,42 @@ public class User {
     public List<UserAddress> getUserAddresses() {
         return userAddresses;
     }
+
+   public void setIdUser(Long idUser) {
+        this.idUser = idUser;
+    }
+    public void setUserRut(String userRut) {
+        this.userRut = userRut;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+    public void setUserPhone(String userPhone) {
+        this.userPhone= userPhone;
+    }
+   
+ public void setUserRole (UserRole userRole) {
+    this.userRole = userRole;
+}
+
+public void setUserAddresses(List<UserAddress> userAddresses) {
+    this.userAddresses.clear();
+
+    if (userAddresses != null) {
+        userAddresses.forEach(this::addUserAddress);
+    }
+}
+
+public void addUserAddress(UserAddress userAddress) {
+    this.userAddresses.add(userAddress);
+    userAddress.setUser(this);
+}
+
+public void removeUserAddress(UserAddress userAddress) {
+    this.userAddresses.remove(userAddress);
+    userAddress.setUser(null);
+}
 }

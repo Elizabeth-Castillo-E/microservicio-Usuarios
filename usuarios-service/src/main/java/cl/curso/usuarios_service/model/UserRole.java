@@ -23,16 +23,16 @@ public class UserRole {
     private String userDescriptionRole;
 
     protected UserRole() {
-        // Constructor requerido por JPA.
+        
     }
 
-    public UserRole(long idUserRole, String userNameRole, String userDescriptionRole) {
-        this.idUserRole = idUserRole;
+    public UserRole(String userNameRole, String userDescriptionRole) {
+        
         this.userNameRole = userNameRole;
         this.userDescriptionRole = userDescriptionRole;
     }
 
-    public long getIdUserRole() {
+    public Long getIdUserRole() {
         return idUserRole;
     }
 
@@ -42,5 +42,16 @@ public class UserRole {
 
     public String getUserDescriptionRole() {
         return userDescriptionRole;
+    }
+
+      public void setIdUserRole(Long idUserRole) {
+        this.idUserRole = idUserRole;
+    }
+      public void setUserNameRole(String userNameRole) {
+        this.userNameRole = userNameRole;
+    }
+
+    public void setUserDescriptionRole(String userDescriptionRole) {
+        this.userDescriptionRole = userDescriptionRole;
     }
 }
