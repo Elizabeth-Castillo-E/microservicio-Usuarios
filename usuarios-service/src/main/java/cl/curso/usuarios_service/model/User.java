@@ -50,10 +50,10 @@ public class User {
     @Size(max = 150, message = "El correo electrónico no puede superar 150 caracteres")
     private String userEmail;
 
-    @Column(name = "USER_PHONE", length = 9)
+    @Column(name = "USER_PHONE", length = 12)
     @Pattern(
-        regexp = "^$|^\\+?[0-9]{9}$",
-        message = "El teléfono debe contener 9 dígitos"
+        regexp = "^$|^(\\+56)?9\\d{8}$",
+        message = "El teléfono debe tener el formato 912345678 o +56912345678"
     )
     private String userPhone;
 
@@ -88,7 +88,7 @@ public class User {
         this.userEmail = userEmail;
         this.userPhone = userPhone;
         this.userRole = userRole;
-        this.userAddresses = userAddresses;
+        setUserAddresses(userAddresses);
     }
 
     public Long getIdUser() {

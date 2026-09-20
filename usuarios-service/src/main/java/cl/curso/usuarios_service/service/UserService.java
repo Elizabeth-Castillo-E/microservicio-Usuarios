@@ -19,13 +19,10 @@ public interface UserService {
     User saveUser (User user);
     User updateUser (Long id, User user);
     void  deleteUser (Long id);
+    User addAddressToUser(Long userId, UserAddress address);
+    User updateAddressFromUser(Long userId, Long addressId, UserAddress address);
+    User removeAddressFromUser(Long userId, Long addressId);
     
-
-    List<UserAddress> getAllAddresses();
-    Optional<UserAddress> getAddressById(Long id);
-    UserAddress saveUserAddress (UserAddress userAddress);
-    UserAddress updateUserAddress (Long id, UserAddress userAddress);   
-    void  deleteUserAddress (Long id);
 
     List<UserRole> getAllRoles();
     Optional<UserRole> getRoleById(Long id);

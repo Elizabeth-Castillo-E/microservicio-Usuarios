@@ -55,7 +55,7 @@ public class UserAddress {
     }
 
     public UserAddress(
-            long idUserAddress,
+            Long idUserAddress,
             String street,
             String number,
             String city,

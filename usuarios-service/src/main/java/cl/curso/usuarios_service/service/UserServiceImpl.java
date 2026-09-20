@@ -3,8 +3,11 @@
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import cl.curso.usuarios_service.model.User;
+import cl.curso.usuarios_service.model.UserAddress;
 import cl.curso.usuarios_service.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -30,16 +33,15 @@ public class UserServiceImpl implements UserService{
 
 } */
 package cl.curso.usuarios_service.service;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.stereotype.Service;
 
 import cl.curso.usuarios_service.model.User;
 import cl.curso.usuarios_service.model.UserAddress;
 import cl.curso.usuarios_service.model.UserRole;
-import cl.curso.usuarios_service.repository.UserAddressRepository;
 import cl.curso.usuarios_service.repository.UserRepository;
 import cl.curso.usuarios_service.repository.UserRoleRepository;
 
@@ -48,16 +50,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-    private final UserAddressRepository userAddressRepository;
 
     public UserServiceImpl(
             UserRepository userRepository,
-            UserRoleRepository userRoleRepository,
-            UserAddressRepository userAddressRepository
+            UserRoleRepository userRoleRepository
     ) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
-        this.userAddressRepository = userAddressRepository;
     }
 
     @Override
@@ -72,23 +71,60 @@ public class UserServiceImpl implements UserService {
     
     @Override 
     public User saveUser(User user){
+        validateUniqueUserFields(user, null);
+        linkExistingRole(user);
+        linkUserAddresses(user);
         return userRepository.save(user);
     }
     @Override 
     public User updateUser(Long id, User user){
-        if (userRepository.existsById(id)) {
-            user.setIdUser(id);
-            userRepository.save(user);
-            return userRepository.save(user);
-            
-        }
-        else {
-                throw new IllegalArgumentException("el id del usuario no puede ser nulo");
-            }
+        requireUser(id);
+        validateUniqueUserFields(user, id);
+        user.setIdUser(id);
+        linkExistingRole(user);
+        linkUserAddresses(user);
+        return userRepository.save(user);
     }
     @Override 
     public void deleteUser(Long id){
-        userRepository.deleteById(id);
+        userRepository.delete(requireUser(id));
+    }
+
+    @Override
+    public User addAddressToUser(Long userId, UserAddress address) {
+        User user = findUserOrThrow(userId);
+        user.addUserAddress(address);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updateAddressFromUser(Long userId, Long addressId, UserAddress newAddress) {
+        User user = findUserOrThrow(userId);
+        UserAddress address = user.getUserAddresses().stream()
+            .filter(item -> addressId.equals(item.getIdUserAddress()))
+            .findFirst()
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Dirección no encontrada para el usuario: " + userId));
+        address.setStreet(newAddress.getStreet());
+        address.setNumber(newAddress.getNumber());
+        address.setCity(newAddress.getCity());
+        address.setRegion(newAddress.getRegion());
+        address.setCountry(newAddress.getCountry());
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User removeAddressFromUser(Long userId, Long addressId) {
+        User user = findUserOrThrow(userId);
+        UserAddress address = user.getUserAddresses().stream()
+            .filter(item -> addressId.equals(item.getIdUserAddress()))
+            .findFirst()
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "La dirección no pertenece al usuario: " + userId
+            ));
+        user.removeUserAddress(address);
+        return userRepository.save(user);
     }
 
     @Override
@@ -106,51 +142,58 @@ public class UserServiceImpl implements UserService {
     }
     @Override 
     public UserRole updateUserRole(Long id, UserRole userRole){
-        if (userRoleRepository.existsById(id)) {
-            userRole.setIdUserRole(id);
-            userRoleRepository.save(userRole);
-            return userRoleRepository.save(userRole);
-            
-        }
-        else {
-                throw new IllegalArgumentException("el id del usuario no puede ser nulo");
-            }
+        requireRole(id);
+        userRole.setIdUserRole(id);
+        return userRoleRepository.save(userRole);
     }
     @Override 
     public void deleteUserRole(Long id){
-        userRoleRepository.deleteById(id);
+        userRoleRepository.delete(requireRole(id));
     }
 
-
-    @Override
-    public List<UserAddress> getAllAddresses() {
-        return userAddressRepository.findAll();
-    }
-
-    @Override
-    public Optional<UserAddress> getAddressById(Long id) {
-        return userAddressRepository.findById(id);
-    }
-
-     @Override 
-    public UserAddress saveUserAddress(UserAddress UserAddress){
-        return userAddressRepository.save(UserAddress);
-    }
-    @Override 
-    public UserAddress updateUserAddress(Long id, UserAddress userAddress){
-        if (userAddressRepository.existsById(id)) {
-            userAddress.setIdUserAddress(id);
-            userAddressRepository.save(userAddress);
-            return userAddressRepository.save(userAddress);
-            
+    private void linkExistingRole(User user) {
+        if (user.getUserRole() == null || user.getUserRole().getIdUserRole() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe indicar el ID de un rol existente");
         }
-        else {
-                throw new IllegalArgumentException("el id del usuario no puede ser nulo");
-            }
-    }
-    @Override 
-    public void deleteUserAddress(Long id){
-        userAddressRepository.deleteById(id);
+        user.setUserRole(requireRole(user.getUserRole().getIdUserRole()));
     }
 
+    private void validateUniqueUserFields(User user, Long currentUserId) {
+        boolean rutExists = currentUserId == null
+            ? userRepository.existsByUserRut(user.getUserRut())
+            : userRepository.existsByUserRutAndIdUserNot(user.getUserRut(), currentUserId);
+        if (rutExists) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Ya existe un usuario registrado con el RUT: " + user.getUserRut());
+        }
+
+        boolean emailExists = currentUserId == null
+            ? userRepository.existsByUserEmail(user.getUserEmail())
+            : userRepository.existsByUserEmailAndIdUserNot(user.getUserEmail(), currentUserId);
+        if (emailExists) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Ya existe un usuario registrado con el correo: " + user.getUserEmail());
+        }
+    }
+    private void linkUserAddresses(User user) {
+        user.getUserAddresses().forEach(address -> address.setUser(user));
+    }
+
+    private User findUserOrThrow(Long id) {
+        return requireUser(id);
+    }
+
+    private User requireUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "Usuario no encontrado: " + id
+        ));
+    }
+
+    private UserRole requireRole(Long id) {
+        return userRoleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "Rol no encontrado: " + id
+        ));
+    }
 }
