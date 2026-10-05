@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets and Oracle wallets ###
+.env
+wallet/
+Wallet_*/
